@@ -38,9 +38,12 @@ class LoginModel(BaseModel):
     password: str
 
 
+from fastapi.responses import FileResponse
+import os
+
 @app.get("/")
 def root():
-    return {"status": "Community Hero API is running!"}
+    return FileResponse(os.path.join(os.path.dirname(__file__), "../frontend/index.html"))
 
 
 @app.get("/app")
