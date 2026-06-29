@@ -5,3 +5,4 @@ __pycache__/
 *.pyo
 backend/reports/
 concurrency_test.py
+requirements.txt/
