@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile - Community Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1a7a4a; --green-light: #e8f5ee; --green-mid: #2ecc71;
+    --orange: #e67e22; --orange-light: #fef3e8;
+    --red: #e74c3c; --red-light: #fdecea;
+    --dark: #1a1a2e; --card: #ffffff; --border: #e8ecf0;
+    --text: #1a1a2e; --muted: #6b7280; --bg: #f0f4f8;
+    --radius: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
+
+  nav {
+    background: var(--dark); padding: 1rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-brand { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: #fff; }
+  .nav-brand span { color: var(--green-mid); }
+
+  main { max-width: 480px; margin: 0 auto; padding: 2rem 1rem; }
+
+  /* AUTH TABS */
+  .auth-tabs { display: flex; background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 4px; margin-bottom: 1.5rem; }
+  .auth-tab {
+    flex: 1; padding: 0.7rem; text-align: center; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    color: var(--muted);
+  }
+  .auth-tab.active { background: var(--green); color: #fff; }
+
+  /* CARD */
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    padding: 1.75rem;
+  }
+
+  .card-icon-wrap {
+    width: 64px; height: 64px; background: var(--green-light);
+    border-radius: 20px; display: flex; align-items: center;
+    justify-content: center; font-size: 28px; margin: 0 auto 1.25rem;
+  }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 0.35rem; }
+  .card-sub { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 1.5rem; }
+
+  /* FORM */
+  .form-group { margin-bottom: 1rem; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 0.85rem 1rem;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 15px; font-family: 'Inter', sans-serif;
+    outline: none; transition: border 0.2s; color: var(--text);
+    background: #fff;
+  }
+  .form-input:focus { border-color: var(--green); }
+
+  .submit-btn {
+    width: 100%; padding: 1rem; background: var(--green); color: #fff;
+    border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: all 0.2s; margin-top: 0.5rem;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .submit-btn:hover { background: #145c36; transform: translateY(-1px); }
+
+  .error-msg {
+    background: var(--red-light); color: var(--red);
+    padding: 0.75rem 1rem; border-radius: 10px;
+    font-size: 13px; font-weight: 500; margin-bottom: 1rem;
+    display: none;
+  }
+  .success-msg {
+    background: var(--green-light); color: var(--green);
+    padding: 0.75rem 1rem; border-radius: 10px;
+    font-size: 13px; font-weight: 500; margin-bottom: 1rem;
+    display: none;
+  }
+
+  /* PROFILE VIEW */
+  .profile-view { display: none; }
+  .profile-hero {
+    background: linear-gradient(135deg, var(--dark), #16213e);
+    border-radius: var(--radius); padding: 2rem; text-align: center;
+    margin-bottom: 1.25rem;
+  }
+  .profile-avatar {
+    width: 72px; height: 72px; background: var(--green-mid);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800; color: #fff; margin: 0 auto 1rem;
+    font-family: 'Syne', sans-serif;
+  }
+  .profile-name { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: #fff; }
+  .profile-email { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+  .profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+  .profile-stat {
+    background: var(--card); border-radius: 12px; border: 1px solid var(--border);
+    padding: 1rem; text-align: center; box-shadow: var(--shadow);
+  }
+  .profile-stat-num { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--green); }
+  .profile-stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .my-reports-title { font-weight: 700; font-size: 1rem; margin-bottom: 1rem; }
+  .report-mini {
+    background: var(--card); border-radius: 12px; border: 1px solid var(--border);
+    padding: 1rem; margin-bottom: 10px; box-shadow: var(--shadow);
+  }
+  .report-mini-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .report-mini-type { font-weight: 600; font-size: 14px; }
+  .severity-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .sev-high { background: var(--red-light); color: var(--red); }
+  .sev-medium { background: var(--orange-light); color: var(--orange); }
+  .sev-low { background: var(--green-light); color: var(--green); }
+  .report-mini-loc { font-size: 12px; color: var(--muted); }
+
+  .logout-btn {
+    width: 100%; padding: 0.85rem; background: #fff; color: var(--red);
+    border: 1.5px solid var(--red-light); border-radius: 12px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 1rem;
+  }
+  .logout-btn:hover { background: var(--red-light); }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--card); border-top: 1px solid var(--border);
+    display: flex; padding: 0.5rem 0 0.75rem; z-index: 50;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; font-size: 10px; color: var(--muted); cursor: pointer;
+    padding: 0.5rem 0; font-weight: 500; transition: color 0.2s; text-decoration: none;
+  }
+  .nav-item.active { color: var(--green); }
+  .nav-item i { font-size: 20px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%);
+    background: var(--dark); color: #fff; padding: 0.75rem 1.5rem;
+    border-radius: 50px; font-size: 14px; opacity: 0;
+    transition: opacity 0.3s; z-index: 999; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Community<span>Hero</span></div>
+  <span style="color: rgba(255,255,255,0.5); font-size: 13px;" id="nav-status">Account</span>
+</nav>
+
+<main>
+
+  <!-- AUTH SECTION -->
+  <div id="auth-section">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</div>
+      <div class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="card" id="login-form">
+      <div class="card-icon-wrap">🔐</div>
+      <div class="card-title">Welcome Back!</div>
+      <div class="card-sub">Login to track your reports</div>
+      <div class="error-msg" id="login-error"></div>
+      <div class="success-msg" id="login-success"></div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="login-email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="login-password" placeholder="••••••••" />
+      </div>
+      <button class="submit-btn" onclick="handleLogin()">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div class="card" id="signup-form" style="display:none;">
+      <div class="card-icon-wrap">🦸</div>
+      <div class="card-title">Join Community Hero</div>
+      <div class="card-sub">Create your account to start reporting</div>
+      <div class="error-msg" id="signup-error"></div>
+      <div class="success-msg" id="signup-success"></div>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" type="text" id="signup-name" placeholder="Your name" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="signup-email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="signup-password" placeholder="Min 6 characters" />
+      </div>
+      <button class="submit-btn" onclick="handleSignup()">
+        <i class="fas fa-user-plus"></i> Create Account
+      </button>
+    </div>
+  </div>
+
+  <!-- PROFILE SECTION -->
+  <div class="profile-view" id="profile-section">
+    <div class="profile-hero">
+      <div class="profile-avatar" id="profile-avatar">?</div>
+      <div class="profile-name" id="profile-name">User</div>
+      <div class="profile-email" id="profile-email">email</div>
+    </div>
+
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <div class="profile-stat-num" id="my-total">0</div>
+        <div class="profile-stat-label">Reports</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-num" id="my-pending">0</div>
+        <div class="profile-stat-label">Pending</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-num" id="my-resolved">0</div>
+        <div class="profile-stat-label">Resolved</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="my-reports-title">📋 My Reports</div>
+      <div id="my-reports-list">
+        <p style="color: var(--muted); font-size: 14px; text-align: center; padding: 1rem 0;">No reports yet. <a href="/app" style="color: var(--green);">Report an issue!</a></p>
+      </div>
+      <button class="logout-btn" onclick="handleLogout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a href="/app" class="nav-item"><i class="fas fa-plus-circle"></i>Report</a>
+  <a href="/map" class="nav-item"><i class="fas fa-map"></i>Map</a>
+  <a href="/dashboard" class="nav-item"><i class="fas fa-chart-bar"></i>Dashboard</a>
+  <a href="/profile" class="nav-item active"><i class="fas fa-user"></i>Profile</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let currentUser = JSON.parse(localStorage.getItem('ch_user') || 'null');
+
+// Check if already logged in
+window.onload = () => {
+  if (currentUser) showProfile(currentUser);
+};
+
+function switchTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+
+  if (!email || !password) { showError('login-error', 'Please fill all fields'); return; }
+
+  try {
+    const res = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) { showError('login-error', data.detail || 'Login failed'); return; }
+
+    currentUser = data;
+    localStorage.setItem('ch_user', JSON.stringify(data));
+    showToast('✅ Welcome back, ' + data.name + '!');
+    showProfile(data);
+  } catch { showError('login-error', 'Connection error'); }
+}
+
+async function handleSignup() {
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value.trim();
+
+  if (!name || !email || !password) { showError('signup-error', 'Please fill all fields'); return; }
+  if (password.length < 6) { showError('signup-error', 'Password must be at least 6 characters'); return; }
+
+  try {
+    const res = await fetch('/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) { showError('signup-error', data.detail || 'Signup failed'); return; }
+
+    currentUser = data;
+    localStorage.setItem('ch_user', JSON.stringify(data));
+    showToast('🎉 Account created successfully!');
+    showProfile(data);
+  } catch { showError('signup-error', 'Connection error'); }
+}
+
+async function showProfile(user) {
+  document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('profile-section').style.display = 'block';
+  document.getElementById('nav-status').textContent = 'My Profile';
+
+  // Set profile info
+  document.getElementById('profile-avatar').textContent = user.name?.charAt(0).toUpperCase() || '?';
+  document.getElementById('profile-name').textContent = user.name;
+  document.getElementById('profile-email').textContent = user.email;
+
+  // Load my reports
+  try {
+    const res = await fetch('/reports');
+    const allReports = await res.json();
+    const myReports = allReports.filter(r => r.user_email === user.email);
+
+    document.getElementById('my-total').textContent = myReports.length;
+    document.getElementById('my-pending').textContent = myReports.filter(r => r.status === 'Pending').length;
+    document.getElementById('my-resolved').textContent = myReports.filter(r => r.status === 'Resolved').length;
+
+    if (myReports.length === 0) return;
+
+    document.getElementById('my-reports-list').innerHTML = myReports.reverse().map(r => `
+      <div class="report-mini">
+        <div class="report-mini-top">
+          <span class="report-mini-type">${r.issue_type || 'Unknown'}</span>
+          <span class="severity-badge sev-${(r.severity||'low').toLowerCase()}">${r.severity}</span>
+        </div>
+        <div class="report-mini-loc"><i class="fas fa-map-marker-alt"></i> ${r.location} &nbsp;·&nbsp; #${r.report_id}</div>
+      </div>
+    `).join('');
+  } catch {}
+}
+
+function handleLogout() {
+  currentUser = null;
+  localStorage.removeItem('ch_user');
+  document.getElementById('auth-section').style.display = 'block';
+  document.getElementById('profile-section').style.display = 'none';
+  document.getElementById('nav-status').textContent = 'Account';
+  showToast('👋 Logged out!');
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

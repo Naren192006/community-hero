@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Community Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1a7a4a; --green-light: #e8f5ee; --green-mid: #2ecc71;
+    --orange: #e67e22; --orange-light: #fef3e8;
+    --red: #e74c3c; --red-light: #fdecea;
+    --blue: #2980b9; --blue-light: #eaf4fb;
+    --dark: #1a1a2e; --dark2: #16213e;
+    --card: #ffffff; --border: #e8ecf0;
+    --text: #1a1a2e; --muted: #6b7280; --bg: #f0f4f8;
+    --radius: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  nav {
+    background: var(--dark); padding: 1rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: #fff; }
+  .nav-brand .dot { color: var(--green-mid); }
+  .nav-badge { background: var(--green-mid); color: #fff; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; }
+  .hero { background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%); padding: 3rem 1.5rem 4rem; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(46,204,113,0.15) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); pointer-events: none; }
+  .hero-icon { width: 72px; height: 72px; background: var(--green-mid); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 32px; }
+  .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 0.75rem; }
+  .hero h1 span { color: var(--green-mid); }
+  .hero p { color: rgba(255,255,255,0.65); font-size: 1rem; max-width: 420px; margin: 0 auto 2rem; line-height: 1.6; }
+  .hero-stats { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--green-mid); }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  main { max-width: 600px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .login-required-card { display: none; background: var(--card); border-radius: var(--radius); border: 1.5px solid var(--orange); box-shadow: var(--shadow); padding: 2rem 1.5rem; text-align: center; margin-bottom: 1.25rem; }
+  .login-required-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .login-required-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .login-required-sub { font-size: 14px; color: var(--muted); margin-bottom: 1.25rem; }
+  .login-required-btn { display: inline-flex; align-items: center; gap: 8px; padding: 0.75rem 1.5rem; background: var(--green); color: #fff; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+  .login-required-btn:hover { background: #145c36; }
+  .steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2rem; }
+  .step-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .step-circle { width: 36px; height: 36px; border-radius: 50%; background: var(--border); color: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; transition: all 0.3s; }
+  .step-circle.active { background: var(--green); color: #fff; }
+  .step-circle.done { background: var(--green-mid); color: #fff; }
+  .step-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .step-line { width: 48px; height: 2px; background: var(--border); margin-bottom: 20px; transition: all 0.3s; }
+  .step-line.done { background: var(--green-mid); }
+  .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 1.75rem; margin-bottom: 1.25rem; transition: all 0.3s; }
+  .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
+  .card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .card-icon.green { background: var(--green-light); color: var(--green); }
+  .card-icon.orange { background: var(--orange-light); color: var(--orange); }
+  .card-icon.blue { background: var(--blue-light); color: var(--blue); }
+  .card-title { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .card-subtitle { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .upload-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 2.5rem 1rem; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--green); background: var(--green-light); }
+  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .upload-text { font-size: 15px; font-weight: 600; color: var(--text); }
+  .upload-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .camera-btn { width: 100%; padding: 0.85rem; background: var(--dark); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 0.75rem; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+  .camera-btn:hover { background: var(--green); }
+  #preview-container { display: none; margin-top: 1rem; }
+  #preview-img { width: 100%; border-radius: 12px; max-height: 280px; object-fit: cover; }
+  .preview-remove { display: flex; align-items: center; gap: 6px; margin-top: 8px; color: var(--red); font-size: 13px; font-weight: 500; cursor: pointer; width: fit-content; }
+  .location-row { display: flex; gap: 10px; }
+  .location-input { flex: 1; padding: 0.85rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: border 0.2s; color: var(--text); background: #fff; }
+  .location-input:focus { border-color: var(--green); }
+  .gps-btn { padding: 0.85rem 1rem; background: var(--green-light); color: var(--green); border: 1.5px solid var(--green-light); border-radius: 10px; font-size: 18px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .gps-btn:hover { background: var(--green); color: #fff; }
+  .info-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--blue-light); color: var(--blue); font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; margin-top: 0.75rem; }
+  .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cat-item { display: flex; align-items: center; gap: 10px; padding: 0.75rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; font-size: 14px; font-weight: 500; color: var(--text); }
+  .cat-item:hover { border-color: var(--green); background: var(--green-light); }
+  .cat-item.selected { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .cat-emoji { font-size: 20px; }
+  textarea { width: 100%; padding: 0.85rem 1rem; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; resize: vertical; min-height: 90px; transition: border 0.2s; color: var(--text); }
+  textarea:focus { border-color: var(--green); }
+  .submit-btn { width: 100%; padding: 1rem; background: var(--green); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; font-family: 'Inter', sans-serif; letter-spacing: 0.3px; margin-top: 0.5rem; }
+  .submit-btn:hover { background: #145c36; transform: translateY(-1px); }
+  .submit-btn:disabled { background: var(--muted); cursor: not-allowed; transform: none; }
+  .loading-card { display: none; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 2.5rem 1.75rem; text-align: center; margin-bottom: 1.25rem; }
+  .spinner { width: 48px; height: 48px; border: 4px solid var(--green-light); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1.25rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .loading-sub { font-size: 14px; color: var(--muted); }
+  .loading-steps { margin-top: 1.5rem; text-align: left; }
+  .loading-step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); padding: 6px 0; transition: color 0.3s; }
+  .loading-step.active { color: var(--green); font-weight: 500; }
+  .loading-step i { font-size: 16px; }
+  .result-card { display: none; }
+  .result-header { background: var(--green); border-radius: 12px 12px 0 0; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 12px; }
+  .result-header-icon { font-size: 28px; }
+  .result-header h2 { font-family: 'Syne', sans-serif; font-size: 1.2rem; color: #fff; font-weight: 700; }
+  .result-header p { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+  .result-body { background: var(--card); border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; padding: 1.5rem; }
+  .result-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 1rem; }
+  .result-row:last-child { border-bottom: none; }
+  .result-label { font-size: 13px; color: var(--muted); font-weight: 500; flex-shrink: 0; }
+  .result-val { font-size: 14px; font-weight: 600; color: var(--text); text-align: right; }
+  .severity-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+  .sev-high { background: var(--red-light); color: var(--red); }
+  .sev-medium { background: var(--orange-light); color: var(--orange); }
+  .sev-low { background: var(--green-light); color: var(--green); }
+  .complaint-box { background: var(--bg); border-radius: 10px; padding: 1rem; font-size: 13px; line-height: 1.7; color: var(--text); margin-top: 0.75rem; border: 1px solid var(--border); white-space: pre-wrap; }
+  .action-row { display: flex; gap: 8px; margin-top: 1.5rem; flex-wrap: wrap; }
+  .action-btn { flex: 1; padding: 0.75rem; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; font-family: 'Inter', sans-serif; border: 1.5px solid transparent; min-width: 80px; }
+  .btn-primary { background: var(--green); color: #fff; }
+  .btn-primary:hover { background: #145c36; }
+  .btn-outline { background: #fff; color: var(--text); border-color: var(--border); }
+  .btn-outline:hover { border-color: var(--green); color: var(--green); }
+  .report-id { display: flex; align-items: center; justify-content: space-between; background: var(--green-light); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+  .report-id-label { font-size: 12px; color: var(--muted); }
+  .report-id-val { font-size: 15px; font-weight: 700; color: var(--green); font-family: monospace; }
+  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--dark); color: #fff; padding: 0.75rem 1.5rem; border-radius: 50px; font-size: 14px; font-weight: 500; opacity: 0; transition: opacity 0.3s; z-index: 999; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-top: 1px solid var(--border); display: flex; padding: 0.5rem 0 0.75rem; z-index: 50; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; color: var(--muted); cursor: pointer; padding: 0.5rem 0; font-weight: 500; transition: color 0.2s; text-decoration: none; }
+  .nav-item.active { color: var(--green); }
+  .nav-item:hover { color: var(--green); }
+  .nav-item i { font-size: 20px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><span>Community<span class="dot">Hero</span></span></div>
+  <span class="nav-badge">BETA</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-icon">🦸</div>
+  <h1>Report. Track. <span>Resolve.</span></h1>
+  <p>Help fix your community — snap a photo, share the location, let AI do the rest.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">2.4k</div><div class="stat-label">Issues Reported</div></div>
+    <div class="stat"><div class="stat-num">87%</div><div class="stat-label">Resolution Rate</div></div>
+    <div class="stat"><div class="stat-num">48h</div><div class="stat-label">Avg Response</div></div>
+  </div>
+</div>
+
+<main>
+
+  <!-- LOGIN REQUIRED -->
+  <div class="login-required-card" id="login-required-card">
+    <div class="login-required-icon">🔒</div>
+    <div class="login-required-title">Login required to report an issue</div>
+    <div class="login-required-sub">Create a free account or log in so your reports are tracked and verified.</div>
+    <a href="/profile" class="login-required-btn"><i class="fas fa-sign-in-alt"></i> Login / Sign Up</a>
+  </div>
+
+  <!-- REPORT FORM -->
+  <div id="report-form-section">
+
+    <div class="steps">
+      <div class="step-item"><div class="step-circle active" id="s1">1</div><span class="step-label">Photo</span></div>
+      <div class="step-line" id="l1"></div>
+      <div class="step-item"><div class="step-circle" id="s2">2</div><span class="step-label">Location</span></div>
+      <div class="step-line" id="l2"></div>
+      <div class="step-item"><div class="step-circle" id="s3">3</div><span class="step-label">Details</span></div>
+      <div class="step-line" id="l3"></div>
+      <div class="step-item"><div class="step-circle" id="s4">4</div><span class="step-label">Result</span></div>
+    </div>
+
+    <div class="card" id="photo-card">
+      <div class="card-header">
+        <div class="card-icon green"><i class="fas fa-camera"></i></div>
+        <div><div class="card-title">Upload Issue Photo</div><div class="card-subtitle">A clear photo helps AI identify the issue</div></div>
+      </div>
+      <div class="upload-zone" id="drop-zone">
+        <input type="file" id="photo-input" accept="image/*" capture="environment" />
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">Tap to upload or drag here</div>
+        <div class="upload-sub">JPG, PNG supported</div>
+      </div>
+      <button class="camera-btn" onclick="document.getElementById('photo-input').click()">
+        <i class="fas fa-camera"></i> Open Camera
+      </button>
+      <div id="preview-container">
+        <img id="preview-img" src="" alt="Preview" />
+        <div class="preview-remove" onclick="removePhoto()"><i class="fas fa-times-circle"></i> Remove photo</div>
+      </div>
+    </div>
+
+    <div class="card" id="location-card">
+      <div class="card-header">
+        <div class="card-icon orange"><i class="fas fa-map-marker-alt"></i></div>
+        <div><div class="card-title">Location</div><div class="card-subtitle">Where is the issue located?</div></div>
+      </div>
+      <div class="location-row">
+        <input class="location-input" type="text" id="location-input" placeholder="e.g. MG Road, Bengaluru" />
+        <button class="gps-btn" onclick="getGPS()" title="Use my GPS location"><i class="fas fa-crosshairs"></i></button>
+      </div>
+      <div class="info-pill"><i class="fas fa-info-circle"></i> Tap the crosshair icon to auto-detect your location</div>
+    </div>
+
+    <div class="card" id="details-card">
+      <div class="card-header">
+        <div class="card-icon blue"><i class="fas fa-list-ul"></i></div>
+        <div><div class="card-title">Issue Details</div><div class="card-subtitle">Help the AI understand better</div></div>
+      </div>
+      <div class="category-grid">
+        <div class="cat-item" onclick="selectCat(this, 'Pothole')"><span class="cat-emoji">🕳️</span> Pothole</div>
+        <div class="cat-item" onclick="selectCat(this, 'Streetlight')"><span class="cat-emoji">💡</span> Streetlight</div>
+        <div class="cat-item" onclick="selectCat(this, 'Water Leakage')"><span class="cat-emoji">💧</span> Water Leakage</div>
+        <div class="cat-item" onclick="selectCat(this, 'Garbage')"><span class="cat-emoji">🗑️</span> Garbage</div>
+        <div class="cat-item" onclick="selectCat(this, 'Road Damage')"><span class="cat-emoji">🚧</span> Road Damage</div>
+        <div class="cat-item" onclick="selectCat(this, 'Other')"><span class="cat-emoji">📌</span> Other</div>
+      </div>
+      <textarea id="description" placeholder="Describe the issue briefly (optional)..." style="margin-top: 1rem;"></textarea>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitReport()">
+      <i class="fas fa-paper-plane"></i> Submit Report
+    </button>
+
+    <div class="loading-card" id="loading-card">
+      <div class="spinner"></div>
+      <div class="loading-title">Analyzing your report...</div>
+      <div class="loading-sub">Our AI is working on it</div>
+      <div class="loading-steps">
+        <div class="loading-step active" id="ls1"><i class="fas fa-image"></i> Reading the photo</div>
+        <div class="loading-step" id="ls2"><i class="fas fa-brain"></i> Identifying issue type</div>
+        <div class="loading-step" id="ls3"><i class="fas fa-exclamation-triangle"></i> Estimating severity</div>
+        <div class="loading-step" id="ls4"><i class="fas fa-file-alt"></i> Drafting complaint letter</div>
+      </div>
+    </div>
+
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <div class="result-header-icon">✅</div>
+        <div><h2>Report Submitted!</h2><p>AI analysis complete</p></div>
+      </div>
+      <div class="result-body">
+        <div class="report-id">
+          <span class="report-id-label">Report ID</span>
+          <span class="report-id-val" id="report-id-val">#CH-000000</span>
+        </div>
+        <div class="result-row"><span class="result-label">Issue Type</span><span class="result-val" id="r-type">—</span></div>
+        <div class="result-row"><span class="result-label">Severity</span><span class="result-val" id="r-severity">—</span></div>
+        <div class="result-row"><span class="result-label">Location</span><span class="result-val" id="r-location">—</span></div>
+        <div class="result-row"><span class="result-label">Est. Resolution</span><span class="result-val" id="r-resolution">—</span></div>
+        <div class="result-row" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+          <span class="result-label">AI Summary</span>
+          <span class="result-val" id="r-summary" style="text-align: left; font-weight: 400; font-size: 13px; line-height: 1.6; color: #444;">—</span>
+        </div>
+        <div class="result-row" style="flex-direction: column; align-items: flex-start; gap: 6px; border-bottom: none;">
+          <span class="result-label">Auto-Generated Complaint</span>
+          <div class="complaint-box" id="r-complaint">—</div>
+        </div>
+        <div class="action-row">
+          <button class="action-btn btn-outline" onclick="copyComplaint()"><i class="fas fa-copy"></i> Copy</button>
+          <button class="action-btn btn-outline" onclick="emailComplaint()"><i class="fas fa-envelope"></i> Email</button>
+          <button class="action-btn btn-primary" onclick="resetForm()"><i class="fas fa-plus"></i> New Report</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<div class="bottom-nav">
+  <a href="/app" class="nav-item active"><i class="fas fa-plus-circle"></i>Report</a>
+  <a href="/map" class="nav-item"><i class="fas fa-map"></i>Map</a>
+  <a href="/dashboard" class="nav-item"><i class="fas fa-chart-bar"></i>Dashboard</a>
+  <a href="/profile" class="nav-item"><i class="fas fa-user"></i>Profile</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let selectedPhoto = null;
+let selectedCategory = '';
+let reportComplaint = '';
+
+function getCurrentUser() {
+  try { return JSON.parse(localStorage.getItem('ch_user') || 'null'); } catch { return null; }
+}
+
+function applyLoginGate() {
+  const user = getCurrentUser();
+  const gate = document.getElementById('login-required-card');
+  const formSection = document.getElementById('report-form-section');
+  if (user && user.email) {
+    gate.style.display = 'none';
+    formSection.style.display = 'block';
+  } else {
+    gate.style.display = 'block';
+    formSection.style.display = 'none';
+  }
+  return user;
+}
+
+window.addEventListener('DOMContentLoaded', applyLoginGate);
+window.addEventListener('storage', (e) => { if (e.key === 'ch_user') applyLoginGate(); });
+
+document.getElementById('photo-input').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  selectedPhoto = file;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    document.getElementById('preview-img').src = ev.target.result;
+    document.getElementById('preview-container').style.display = 'block';
+    document.getElementById('drop-zone').style.display = 'none';
+    document.querySelector('.camera-btn').style.display = 'none';
+    updateStep(2);
+  };
+  reader.readAsDataURL(file);
+});
+
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', (e) => {
+  e.preventDefault(); dz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) { document.getElementById('photo-input').files = e.dataTransfer.files; document.getElementById('photo-input').dispatchEvent(new Event('change')); }
+});
+
+function removePhoto() {
+  selectedPhoto = null;
+  document.getElementById('preview-container').style.display = 'none';
+  document.getElementById('drop-zone').style.display = 'block';
+  document.querySelector('.camera-btn').style.display = 'flex';
+  document.getElementById('photo-input').value = '';
+  updateStep(1);
+}
+
+function getGPS() {
+  if (!navigator.geolocation) { showToast('GPS not supported'); return; }
+  showToast('📍 Getting your location...');
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+        const data = await res.json();
+        const addr = data.address;
+        const loc = [addr.road, addr.suburb, addr.city || addr.town].filter(Boolean).join(', ');
+        document.getElementById('location-input').value = loc || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+        showToast('✅ Location detected!');
+        updateStep(3);
+      } catch {
+        document.getElementById('location-input').value = `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+        showToast('✅ GPS coordinates captured');
+      }
+    },
+    () => showToast('❌ Location access denied')
+  );
+}
+
+function selectCat(el, cat) {
+  document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedCategory = cat;
+}
+
+function updateStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const c = document.getElementById('s' + i);
+    c.classList.remove('active', 'done');
+    if (i < n) c.classList.add('done');
+    else if (i === n) c.classList.add('active');
+    if (i < 4) { const l = document.getElementById('l' + i); l.classList.toggle('done', i < n); }
+  }
+}
+
+async function submitReport() {
+  const user = applyLoginGate();
+  if (!user || !user.email) { showToast('🔒 Please log in to submit a report'); return; }
+  if (!selectedPhoto) { showToast('❌ Please upload a photo first'); return; }
+  const location = document.getElementById('location-input').value.trim();
+  if (!location) { showToast('❌ Please enter your location'); return; }
+
+  document.getElementById('submit-btn').style.display = 'none';
+  document.getElementById('loading-card').style.display = 'block';
+  updateStep(4);
+
+  const animateSteps = async () => {
+    const steps = ['ls1','ls2','ls3','ls4'];
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(r => setTimeout(r, 900));
+      document.getElementById(steps[i]).classList.remove('active');
+      if (i + 1 < steps.length) document.getElementById(steps[i+1]).classList.add('active');
+    }
+  };
+  animateSteps();
+
+  try {
+    const formData = new FormData();
+    formData.append('photo', selectedPhoto);
+    formData.append('location', location);
+    formData.append('category', selectedCategory || 'Unknown');
+    formData.append('description', document.getElementById('description').value);
+    formData.append('user_email', user.email);
+
+    const res = await fetch('/report', { method: 'POST', body: formData });
+
+    if (res.status === 401) {
+      localStorage.removeItem('ch_user');
+      applyLoginGate();
+      throw new Error('Your session expired. Please log in again.');
+    }
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Server error ${res.status}: ${errText}`);
+    }
+
+    const data = await res.json();
+    showResult(data, location);
+
+  } catch (err) {
+    console.error('FETCH ERROR:', err);
+    document.getElementById('loading-card').style.display = 'none';
+    document.getElementById('submit-btn').style.display = 'flex';
+    updateStep(1);
+    showToast('❌ ' + err.message);
+  }
+}
+
+function showResult(data, location) {
+  document.getElementById('loading-card').style.display = 'none';
+  const rc = document.getElementById('result-card');
+  rc.style.display = 'block';
+  rc.style.visibility = 'visible';
+  rc.style.opacity = '1';
+
+  document.getElementById('report-id-val').textContent = '#' + (data.report_id || 'CH-000000');
+  document.getElementById('r-type').textContent = data.issue_type || 'Unknown';
+  document.getElementById('r-location').textContent = location;
+  document.getElementById('r-resolution').textContent = data.estimated_resolution || 'TBD';
+  document.getElementById('r-summary').textContent = data.summary || '';
+  document.getElementById('r-complaint').textContent = data.complaint || '';
+  reportComplaint = data.complaint || '';
+
+  const sev = (data.severity || 'low').toLowerCase();
+  document.getElementById('r-severity').innerHTML = `<span class="severity-badge sev-${sev === 'high' ? 'high' : sev === 'medium' ? 'medium' : 'low'}">${data.severity}</span>`;
+
+  setTimeout(() => { rc.scrollIntoView({ behavior: 'smooth' }); }, 300);
+}
+
+function copyComplaint() {
+  navigator.clipboard.writeText(reportComplaint).then(() => showToast('✅ Complaint copied!'));
+}
+
+function emailComplaint() {
+  const type = document.getElementById('r-type').textContent;
+  const location = document.getElementById('r-location').textContent;
+  const subject = encodeURIComponent(`Urgent: ${type} at ${location}`);
+  const body = encodeURIComponent(reportComplaint);
+  window.open(`mailto:?subject=${subject}&body=${body}`);
+}
+
+function resetForm() {
+  selectedPhoto = null; selectedCategory = ''; reportComplaint = '';
+  document.getElementById('photo-input').value = '';
+  document.getElementById('preview-container').style.display = 'none';
+  document.getElementById('drop-zone').style.display = 'block';
+  document.querySelector('.camera-btn').style.display = 'flex';
+  document.getElementById('location-input').value = '';
+  document.getElementById('description').value = '';
+  document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('selected'));
+  document.getElementById('submit-btn').style.display = 'flex';
+  document.getElementById('result-card').style.display = 'none';
+  updateStep(1);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Map - Community Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1a7a4a; --green-light: #e8f5ee; --green-mid: #2ecc71;
+    --orange: #e67e22; --orange-light: #fef3e8;
+    --red: #e74c3c; --red-light: #fdecea;
+    --blue: #2980b9; --blue-light: #eaf4fb;
+    --dark: #1a1a2e; --card: #ffffff; --border: #e8ecf0;
+    --text: #1a1a2e; --muted: #6b7280; --bg: #f0f4f8;
+    --radius: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  nav {
+    background: var(--dark); padding: 1rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 1000;
+  }
+  .nav-brand { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: #fff; }
+  .nav-brand span { color: var(--green-mid); }
+
+  /* MAP */
+  #map {
+    width: 100%;
+    height: calc(100vh - 120px - 70px);
+    z-index: 1;
+  }
+
+  /* LEGEND */
+  .legend {
+    position: absolute;
+    top: 80px; right: 12px;
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    font-size: 12px;
+  }
+  .legend-title { font-weight: 700; margin-bottom: 8px; font-size: 13px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .dot-high { background: var(--red); }
+  .dot-medium { background: var(--orange); }
+  .dot-low { background: var(--green-mid); }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--dark);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+  }
+  .stats-bar-item { text-align: center; }
+  .stats-bar-num { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--green-mid); }
+  .stats-bar-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--card); border-top: 1px solid var(--border);
+    display: flex; padding: 0.5rem 0 0.75rem; z-index: 1000;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; font-size: 10px; color: var(--muted); cursor: pointer;
+    padding: 0.5rem 0; font-weight: 500; transition: color 0.2s; text-decoration: none;
+  }
+  .nav-item.active { color: var(--green); }
+  .nav-item i { font-size: 20px; }
+
+  /* POPUP CUSTOM */
+  .custom-popup { font-family: 'Inter', sans-serif; }
+  .popup-type { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .popup-location { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .popup-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 600; margin-bottom: 6px;
+  }
+  .popup-summary { font-size: 12px; color: #555; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Community<span>Hero</span></div>
+  <span style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fas fa-map-marker-alt"></i> Live Map</span>
+</nav>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-bar-item">
+    <div class="stats-bar-num" id="map-total">0</div>
+    <div class="stats-bar-label">Total</div>
+  </div>
+  <div class="stats-bar-item">
+    <div class="stats-bar-num" id="map-high">0</div>
+    <div class="stats-bar-label">High</div>
+  </div>
+  <div class="stats-bar-item">
+    <div class="stats-bar-num" id="map-medium">0</div>
+    <div class="stats-bar-label">Medium</div>
+  </div>
+  <div class="stats-bar-item">
+    <div class="stats-bar-num" id="map-low">0</div>
+    <div class="stats-bar-label">Low</div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div id="map"></div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-title">Severity</div>
+  <div class="legend-item"><div class="legend-dot dot-high"></div> High</div>
+  <div class="legend-item"><div class="legend-dot dot-medium"></div> Medium</div>
+  <div class="legend-item"><div class="legend-dot dot-low"></div> Low</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a href="/app" class="nav-item"><i class="fas fa-plus-circle"></i>Report</a>
+  <a href="/map" class="nav-item active"><i class="fas fa-map"></i>Map</a>
+  <a href="/dashboard" class="nav-item"><i class="fas fa-chart-bar"></i>Dashboard</a>
+  <a href="/profile" class="nav-item"><i class="fas fa-user"></i>Profile</a>
+</div>
+
+<script>
+// Initialize map centered on India
+const map = L.map('map').setView([20.5937, 78.9629], 5);
+
+// Add OpenStreetMap tiles (free, no API key needed)
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+// Severity colors
+const colors = { High: '#e74c3c', Medium: '#e67e22', Low: '#2ecc71' };
+
+// Custom marker
+function createMarker(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="
+      width: 20px; height: 20px;
+      background: ${color};
+      border: 3px solid white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    "></div>`,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  });
+}
+
+// Geocode location using Nominatim (free)
+async function geocodeLocation(location) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)}&format=json&limit=1`);
+    const data = await res.json();
+    if (data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+    }
+  } catch {}
+  return null;
+}
+
+async function loadMapReports() {
+  try {
+    const res = await fetch('/reports');
+    const reports = await res.json();
+
+    // Update stats
+    document.getElementById('map-total').textContent = reports.length;
+    document.getElementById('map-high').textContent = reports.filter(r => r.severity === 'High').length;
+    document.getElementById('map-medium').textContent = reports.filter(r => r.severity === 'Medium').length;
+    document.getElementById('map-low').textContent = reports.filter(r => r.severity === 'Low').length;
+
+    const bounds = [];
+
+    for (const report of reports) {
+      if (!report.location) continue;
+
+      // Geocode the location
+      const coords = await geocodeLocation(report.location);
+      if (!coords) continue;
+
+      bounds.push([coords.lat, coords.lon]);
+
+      const color = colors[report.severity] || '#2ecc71';
+      const marker = L.marker([coords.lat, coords.lon], { icon: createMarker(color) }).addTo(map);
+
+      // Popup content
+      const badgeColor = report.severity === 'High' ? '#fdecea' : report.severity === 'Medium' ? '#fef3e8' : '#e8f5ee';
+      const textColor = report.severity === 'High' ? '#e74c3c' : report.severity === 'Medium' ? '#e67e22' : '#1a7a4a';
+
+      marker.bindPopup(`
+        <div class="custom-popup">
+          <div class="popup-type">${report.issue_type || 'Unknown Issue'}</div>
+          <div class="popup-location"><i class="fas fa-map-marker-alt"></i> ${report.location}</div>
+          <span class="popup-badge" style="background:${badgeColor}; color:${textColor}">${report.severity}</span>
+          <div class="popup-summary">${(report.summary || '').substring(0, 100)}...</div>
+          <div style="font-size:11px; color:#999; margin-top:6px;">#${report.report_id} · ${report.status}</div>
+        </div>
+      `);
+    }
+
+    // Fit map to show all markers
+    if (bounds.length > 0) {
+      map.fitBounds(bounds, { padding: [50, 50] });
+    }
+
+  } catch (err) {
+    console.error('Error loading reports:', err);
+  }
+}
+
+loadMapReports();
+</script>
+</body>
+</html>

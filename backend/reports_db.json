@@ -1,0 +1,27 @@
+{
+  "users": {
+    "nar@gmail.com": {
+      "name": "nar",
+      "email": "nar@gmail.com",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "created_at": "2026-06-29T09:13:33.056816",
+      "reports": []
+    }
+  },
+  "reports": [
+    {
+      "issue_type": "Pothole",
+      "severity": "High",
+      "estimated_resolution": "3-7 days",
+      "summary": "A substantial pothole filled with water is present on MG Road, surrounded by extensive cracking in the pavement. This significant road damage poses a severe risk to vehicles, potentially causing tire and suspension damage, and creates a safety hazard for all road users.",
+      "complaint": "To the Esteemed Municipal Authority,\n\nI am writing to formally report a critical road issue requiring immediate attention on MG Road. As depicted in the accompanying image, there is a large and deep pothole, currently filled with water, located on this road.\n\nThe severity of the issue is compounded by the extensive network of cracks in the surrounding asphalt, indicating significant structural deterioration of the pavement. This condition presents a serious hazard to all motorists, cyclists, and pedestrians, risking substantial damage to vehicles and increasing the potential for accidents.\n\nGiven the substantial size and evident degradation, I urge your department to prioritize an immediate inspection and undertake the necessary repairs to restore the safety and integrity of MG Road. Your prompt action in this matter would be greatly appreciated by the community.\n\nSincerely,\nA Concerned Citizen",
+      "report_id": "CH-3149F3",
+      "location": "mg road",
+      "duplicate": false,
+      "created_at": "2026-06-28T23:13:20.815760",
+      "status": "Pending",
+      "upvotes": 0,
+      "user_email": "anonymous"
+    }
+  ]
+}

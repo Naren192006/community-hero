@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard - Community Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1a7a4a; --green-light: #e8f5ee; --green-mid: #2ecc71;
+    --orange: #e67e22; --orange-light: #fef3e8;
+    --red: #e74c3c; --red-light: #fdecea;
+    --blue: #2980b9; --blue-light: #eaf4fb;
+    --dark: #1a1a2e; --card: #ffffff; --border: #e8ecf0;
+    --text: #1a1a2e; --muted: #6b7280; --bg: #f0f4f8;
+    --radius: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
+
+  nav {
+    background: var(--dark); padding: 1rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-brand { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: #fff; }
+  .nav-brand span { color: var(--green-mid); }
+
+  .hero {
+    background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+  .hero h1 { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; }
+  .hero h1 span { color: var(--green-mid); }
+  .hero p { color: rgba(255,255,255,0.6); font-size: 14px; }
+
+  /* STATS */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+    padding: 1.5rem 1rem 0;
+    max-width: 600px; margin: 0 auto;
+  }
+  .stat-card {
+    background: var(--card); border-radius: 12px;
+    border: 1px solid var(--border); padding: 1.25rem;
+    text-align: center; box-shadow: var(--shadow);
+  }
+  .stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--green); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+  /* FILTERS */
+  main { max-width: 600px; margin: 0 auto; padding: 1.5rem 1rem; }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1.25rem; overflow-x: auto; padding-bottom: 4px; }
+  .filter-btn {
+    padding: 6px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: #fff; font-size: 13px; font-weight: 500; cursor: pointer;
+    white-space: nowrap; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    color: var(--text);
+  }
+  .filter-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+  /* REPORT CARDS */
+  .reports-list { display: flex; flex-direction: column; gap: 12px; }
+  .report-card {
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    padding: 1.25rem; transition: all 0.2s;
+  }
+  .report-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+
+  .report-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+  .report-type { font-weight: 700; font-size: 15px; color: var(--text); }
+  .report-id-small { font-size: 11px; color: var(--muted); font-family: monospace; margin-top: 2px; }
+
+  .severity-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  }
+  .sev-high { background: var(--red-light); color: var(--red); }
+  .sev-medium { background: var(--orange-light); color: var(--orange); }
+  .sev-low { background: var(--green-light); color: var(--green); }
+
+  .report-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 0.75rem; }
+  .meta-item { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--muted); }
+  .meta-item i { font-size: 12px; }
+
+  .report-summary { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 0.75rem; }
+
+  .report-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  }
+  .status-pending { background: #fef3e8; color: #e67e22; }
+  .status-resolved { background: var(--green-light); color: var(--green); }
+  .status-progress { background: var(--blue-light); color: var(--blue); }
+
+  .upvote-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 14px; border-radius: 20px;
+    border: 1.5px solid var(--border); background: #fff;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; font-family: 'Inter', sans-serif;
+    color: var(--text);
+  }
+  .upvote-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+  .upvote-btn.upvoted { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 3rem 1rem; }
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .empty-sub { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+  .report-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 0.75rem 1.5rem; background: var(--green); color: #fff;
+    border-radius: 10px; font-size: 14px; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .report-btn:hover { background: #145c36; }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 2rem; color: var(--muted); }
+  .spinner {
+    width: 32px; height: 32px; border: 3px solid var(--green-light);
+    border-top-color: var(--green); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--card); border-top: 1px solid var(--border);
+    display: flex; padding: 0.5rem 0 0.75rem; z-index: 50;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; font-size: 10px; color: var(--muted); cursor: pointer;
+    padding: 0.5rem 0; font-weight: 500; transition: color 0.2s; text-decoration: none;
+  }
+  .nav-item.active { color: var(--green); }
+  .nav-item i { font-size: 20px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%);
+    background: var(--dark); color: #fff; padding: 0.75rem 1.5rem;
+    border-radius: 50px; font-size: 14px; font-weight: 500;
+    opacity: 0; transition: opacity 0.3s; z-index: 999; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Community<span>Hero</span></div>
+  <span style="color: rgba(255,255,255,0.5); font-size: 13px;">Live Reports</span>
+</nav>
+
+<div class="hero">
+  <h1>Community <span>Dashboard</span></h1>
+  <p>Track all reported issues in your area</p>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">📋</div>
+    <div class="stat-num" id="total-count">0</div>
+    <div class="stat-label">Total Reports</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🔴</div>
+    <div class="stat-num" id="high-count">0</div>
+    <div class="stat-label">High Severity</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">✅</div>
+    <div class="stat-num" id="resolved-count">0</div>
+    <div class="stat-label">Resolved</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">⏳</div>
+    <div class="stat-num" id="pending-count">0</div>
+    <div class="stat-label">Pending</div>
+  </div>
+</div>
+
+<main>
+  <!-- FILTERS -->
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filterReports('all', this)">All</button>
+    <button class="filter-btn" onclick="filterReports('High', this)">🔴 High</button>
+    <button class="filter-btn" onclick="filterReports('Medium', this)">🟠 Medium</button>
+    <button class="filter-btn" onclick="filterReports('Low', this)">🟢 Low</button>
+    <button class="filter-btn" onclick="filterReports('Pending', this)">⏳ Pending</button>
+    <button class="filter-btn" onclick="filterReports('Resolved', this)">✅ Resolved</button>
+  </div>
+
+  <!-- REPORTS LIST -->
+  <div id="reports-container">
+    <div class="loading">
+      <div class="spinner"></div>
+      Loading reports...
+    </div>
+  </div>
+</main>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <a href="/app" class="nav-item"><i class="fas fa-plus-circle"></i>Report</a>
+  <a href="#" class="nav-item"><i class="fas fa-map"></i>Map</a>
+  <a href="/dashboard" class="nav-item active"><i class="fas fa-chart-bar"></i>Dashboard</a>
+  <a href="#" class="nav-item"><i class="fas fa-user"></i>Profile</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let allReports = [];
+let upvotedReports = JSON.parse(localStorage.getItem('upvotedReports') || '[]');
+
+async function loadReports() {
+  try {
+    const res = await fetch('/reports');
+    allReports = await res.json();
+    allReports.reverse(); // newest first
+    updateStats(allReports);
+    renderReports(allReports);
+  } catch (err) {
+    document.getElementById('reports-container').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">Could not load reports</div>
+        <div class="empty-sub">Make sure the backend is running</div>
+      </div>`;
+  }
+}
+
+function updateStats(reports) {
+  document.getElementById('total-count').textContent = reports.length;
+  document.getElementById('high-count').textContent = reports.filter(r => r.severity === 'High').length;
+  document.getElementById('resolved-count').textContent = reports.filter(r => r.status === 'Resolved').length;
+  document.getElementById('pending-count').textContent = reports.filter(r => r.status === 'Pending').length;
+}
+
+function filterReports(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (filter === 'all') { renderReports(allReports); return; }
+  const filtered = allReports.filter(r => r.severity === filter || r.status === filter);
+  renderReports(filtered);
+}
+
+function renderReports(reports) {
+  const container = document.getElementById('reports-container');
+  if (reports.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🦸</div>
+        <div class="empty-title">No reports yet!</div>
+        <div class="empty-sub">Be the first to report an issue in your community</div>
+        <a href="/app" class="report-btn"><i class="fas fa-plus"></i> Report an Issue</a>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="reports-list">${reports.map(r => reportCard(r)).join('')}</div>`;
+}
+
+function reportCard(r) {
+  const sev = (r.severity || 'low').toLowerCase();
+  const status = r.status || 'Pending';
+  const statusClass = status === 'Resolved' ? 'status-resolved' : status === 'In Progress' ? 'status-progress' : 'status-pending';
+  const date = r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Unknown';
+  const isUpvoted = upvotedReports.includes(r.report_id);
+
+  return `
+    <div class="report-card">
+      <div class="report-top">
+        <div>
+          <div class="report-type">${r.issue_type || 'Unknown Issue'}</div>
+          <div class="report-id-small">#${r.report_id}</div>
+        </div>
+        <span class="severity-badge sev-${sev}">${r.severity || 'Unknown'}</span>
+      </div>
+      <div class="report-meta">
+        <div class="meta-item"><i class="fas fa-map-marker-alt"></i> ${r.location || 'Unknown'}</div>
+        <div class="meta-item"><i class="fas fa-clock"></i> ${date}</div>
+        <div class="meta-item"><i class="fas fa-hourglass-half"></i> ${r.estimated_resolution || 'TBD'}</div>
+      </div>
+      <div class="report-summary">${r.summary || ''}</div>
+      <div class="report-bottom">
+        <span class="status-badge ${statusClass}">${status}</span>
+        <button class="upvote-btn ${isUpvoted ? 'upvoted' : ''}" onclick="upvote('${r.report_id}', this)">
+          <i class="fas fa-thumbs-up"></i> ${r.upvotes || 0}
+        </button>
+      </div>
+    </div>`;
+}
+
+async function upvote(reportId, btn) {
+  if (upvotedReports.includes(reportId)) { showToast('Already upvoted!'); return; }
+  try {
+    const res = await fetch(`/upvote/${reportId}`, { method: 'POST' });
+    const data = await res.json();
+    upvotedReports.push(reportId);
+    localStorage.setItem('upvotedReports', JSON.stringify(upvotedReports));
+    btn.classList.add('upvoted');
+    btn.innerHTML = `<i class="fas fa-thumbs-up"></i> ${data.upvotes}`;
+    showToast('👍 Upvoted!');
+  } catch { showToast('Failed to upvote'); }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+loadReports();
+</script>
+</body>
+</html>
